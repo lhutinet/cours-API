@@ -15,7 +15,16 @@ const fetchUser = async () => {
     .then((res) => res.json())
     .then((data) => (userData = data.results));
 
-  console.log(userData);
+  const datParser = (date) => {
+    let newDate = new Date(date).toLocaleDateString("fr-FR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    return newDate;
+  };
+
+  console.log(userData[0]);
 };
 const userDiplay = async () => {
   await fetchUser();
@@ -24,9 +33,12 @@ const userDiplay = async () => {
       (user) =>
         `
       <div class="card">
-      <img src=${user.picture.large} alt="photo de ${user.name.last}"
+      <img src=${user.picture.large} alt="photo de ${user.name.last}">
   <H3>${user.name.first}</H3> 
-  </div>`
+  <p>${user.location.city}, ${datParser(user.dob.date)}</p>
+  <em>Menbre depuis : ${datParser(user.registered.date)} jours</em>
+  </div>
+  `
     )
     .join("");
 };

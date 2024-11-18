@@ -15,7 +15,11 @@ const fetchUser = async () => {
     .then((res) => res.json())
     .then((data) => (userData = data.results));
 
-  const datParser = (date) => {
+  console.log(userData[0]);
+};
+const userDiplay = async () => {
+  await fetchUser();
+  const dateParser = (date) => {
     let newDate = new Date(date).toLocaleDateString("fr-FR", {
       year: "numeric",
       month: "long",
@@ -24,19 +28,22 @@ const fetchUser = async () => {
     return newDate;
   };
 
-  console.log(userData[0]);
-};
-const userDiplay = async () => {
-  await fetchUser();
+  const dayCalc = (date) => {
+    let today = new Date();
+    let todayTimestamp = Date.parse(today);
+    let timeStamp = Date.parse(date);
+    return Math.ceil((todayTimestamp - timeStamp) / 8.64e7 / 365);
+  };
+
   document.body.innerHTML = userData
     .map(
       (user) =>
         `
       <div class="card">
       <img src=${user.picture.large} alt="photo de ${user.name.last}">
-  <H3>${user.name.first}</H3> 
-  <p>${user.location.city}, ${datParser(user.dob.date)}</p>
-  <em>Menbre depuis : ${datParser(user.registered.date)} jours</em>
+  <H3>${user.name.first} ${user.name.last}</H3> 
+  <p>${user.location.city}, ${dateParser(user.dob.date)}</p>
+  <em>Membre depuis : ${dayCalc(user.registered.date)} années</em>
   </div>
   `
     )

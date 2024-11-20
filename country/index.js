@@ -1,73 +1,48 @@
 // 1 - Tester le lien de l'API dans le navigateur (https://restcountries.com/v3.1/all)
 
-let countries = [];
-const card = document.querySelector(".countries-container");
+const countrieContainer = document.querySelector(".countries-container");
+const filterContainer = document.getElementById("inputSearch");
+const inputRange = document.getElementById("inputRange");
+let rangeValue = document.getElementById("rangeValue");
+let countriesData = [];
 
-async function fetchccountries() {
+console.log(inputRange);
+console.log(rangeValue.textContent);
+
+const fetchccountries = async () => {
   await fetch("https://restcountries.com/v3.1/all")
     .then((res) => res.json())
-    .then((data) => (countries = data[10]));
+    .then((data) => (countriesData = data));
+};
 
-  console.log(countries);
-  console.log(countries.name.common);
+inputRange.addEventListener("input", () => {
+  rangeValue.textContent = inputRange.value;
+});
 
-  card.innerHTML = `
-    <img src="${countries.flags.png}" alt="description"/>
-  <h2>${countries.name.common}</h2>
-  <p>${countries.capital}</p>
-  <p>population ${countries.population}</p>
-  `;
-}
+const countrieDisplay = () => {
+  console.log(countriesData.length);
+  countriesData.length = inputRange.value;
+  countrieContainer.innerHTML = countriesData
+    .map(
+      (country) =>
+        `
+   <div class = "card" >
+      <img src="${country.flags.png}" alt="description"/>
+      <h2>${country.translations.fra.common}</h2>
+      <p>${country.capital}</p>
+    <span>population ${country.population} habitants</span>
+  </div>
+    `
+    )
+    .join("");
+};
 
-function countrieDisplay() {
-  card.innerHTML = countries.map(() => {
-    return `
+filterContainer.addEventListener("input", (e) => {
+  console.log(e.target.value);
 
-    <div class=".range-container" >
-     <img src="${countries.flags.png}" alt="description"/>
-     <h2>${countries.name.common}</h2>
-     <p>${countries.capital}</p>
-     <p>population ${countries.population}</p>
-     </div>
-     `;
-  });
-}
-
-countrieDisplay();
-fetchccountries();
-
-// <li class="range-container ">
-//         <h2>${"test"}</h2>
-
-//         </li>
-// function mealsDisplay() {
-//   if (meals === null) {
-//     result.innerHTML = "<h2>Aucun resultat</h2>";
-//   } else {
-//     meals.length = 12;
-//     result.innerHTML = meals
-//       .map((meal) => {
-//         let ingrediants = [];
-//         for (i = 1; i < 21; i++) {
-//           if (meal[`strIngredient${i}`]) {
-//             let ingrediant = meal[`strIngredient${i}`];
-//             let mesure = meal[`strMeasure${i}`];
-//             ingrediants.push(`<li>${ingrediant}  - ${mesure}`);
-//           }
-//         }
-//         console.log(ingrediants);
-
-//         return `
-//
-//           <h2>${meal.strMeal}</h2>
-//           <p>${meal.strArea}</p>
-//           <img src=${meal.strMealThumb} alt="photo ${meal.strMeal}">
-//           <ul>${ingrediants.join("")}</ul>
-//           </li>
-//           `;
-//       })
-//       .join("");
-//   }
+  fetchccountries(e);
+  countrieDisplay(e);
+});
 
 // 4 - Créer une fonction d'affichage, et paramétrer l'affichage des cartes de chaque pays grace à la méthode MAP
 

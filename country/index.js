@@ -13,6 +13,7 @@ const fetchccountries = async () => {
   await fetch("https://restcountries.com/v3.1/all")
     .then((res) => res.json())
     .then((data) => (countriesData = data));
+  console.log(countriesData);
 };
 
 inputRange.addEventListener("input", () => {
@@ -20,9 +21,11 @@ inputRange.addEventListener("input", () => {
 });
 
 const countrieDisplay = () => {
-  console.log(countriesData.length);
   countriesData.length = inputRange.value;
   countrieContainer.innerHTML = countriesData
+    .filter((country) =>
+      country.translations.fr.common.includes(inputSearch.value)
+    )
     .map(
       (country) =>
         `
@@ -40,8 +43,8 @@ const countrieDisplay = () => {
 filterContainer.addEventListener("input", (e) => {
   console.log(e.target.value);
 
-  fetchccountries(e);
-  countrieDisplay(e);
+  fetchccountries();
+  countrieDisplay();
 });
 
 // 4 - Créer une fonction d'affichage, et paramétrer l'affichage des cartes de chaque pays grace à la méthode MAP

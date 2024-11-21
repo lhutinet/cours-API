@@ -3,51 +3,60 @@
 const countrieContainer = document.querySelector(".countries-container");
 const filterContainer = document.getElementById("inputSearch");
 const inputRange = document.getElementById("inputRange");
+// const rangeContainer = document.querySelector(".range-container");
+let nomDuPays = "";
 let rangeValue = document.getElementById("rangeValue");
 let countriesData = [];
-
-console.log(inputRange);
-console.log(rangeValue.textContent);
 
 const fetchccountries = async () => {
   await fetch("https://restcountries.com/v3.1/all")
     .then((res) => res.json())
     .then((data) => (countriesData = data));
-  console.log(countriesData);
+  // console.log(countriesData);
 };
 
-inputRange.addEventListener("input", () => {
-  rangeValue.textContent = inputRange.value;
-});
-
 const countrieDisplay = () => {
-  countriesData.length = inputRange.value;
+  ///ne pas supprimer permet de ce blalder dans le tableau
+  // console.log(countriesData.slice(0, inputRange.value));
+  ///ne pas supprimer permet de ce blalder dans le tableau
   countrieContainer.innerHTML = countriesData
-    .filter((country) =>
-      country.translations.fr.common.includes(inputSearch.value)
-    )
-    .map(
-      (country) =>
-        `
-   <div class = "card" >
-      <img src="${country.flags.png}" alt="description"/>
-      <h2>${country.translations.fra.common}</h2>
-      <p>${country.capital}</p>
-    <span>population ${country.population} habitants</span>
-  </div>
-    `
-    )
+
+    .filter((country) => country.translations.fra.common.includes(nomDuPays))
+    .slice(0, inputRange.value)
+    .map((country) => {
+      console.log(country);
+
+      if (country === null) {
+        console.log("tut");
+      } else {
+        return `
+        <div class = "card" >
+        <img src="${country.flags.png}" alt="description"/>
+        <h2>${country.translations.fra.common}</h2>
+        <p>${country.capital}</p>
+        <span>population ${country.population} habitants</span>
+        </div>
+        `;
+      }
+    })
     .join("");
 };
 
+const rangeChange = () => {
+  inputRange.addEventListener("input", () => {
+    rangeValue.textContent = inputRange.value;
+  });
+};
+
 filterContainer.addEventListener("input", (e) => {
-  console.log(e.target.value);
+  nomDuPays = e.target.value;
+  console.log(nomDuPays);
 
-  fetchccountries();
-  countrieDisplay();
+  rangeChange();
+  fetchccountries()
+    // .then(() => )
+    .then(() => countrieDisplay());
 });
-
-// 4 - Créer une fonction d'affichage, et paramétrer l'affichage des cartes de chaque pays grace à la méthode MAP
 
 // 5 - Récupérer ce qui est tapé dans l'input et filtrer (avant le map) les données
 // coutry.name.includes(inputSearch.value);
